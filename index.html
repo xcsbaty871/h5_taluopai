@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>命运之环塔罗牌游戏</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #2a2a2a;
+      color: #f3f3f3;
+      text-align: center;
+    }
+    header {
+      padding: 10px;
+      background: #1f1f1f;
+    }
+    #game-container {
+      padding: 20px;
+    }
+    .card {
+      display: inline-block;
+      width: 100px;
+      height: 150px;
+      margin: 10px;
+      background-size: cover;
+      background-position: center;
+      border-radius: 10px;
+      cursor: pointer;
+      border: 2px solid #888;
+      transition: transform 0.3s;
+    }
+    .card:hover {
+      transform: scale(1.1);
+      border: 2px solid #fff;
+    }
+    #task, #result, #score {
+      margin-top: 20px;
+    }
+    .button {
+      margin: 10px;
+      padding: 10px 20px;
+      background-color: #555;
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    .button:hover {
+      background-color: #777;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>命运之环</h1>
+    <p>探索你的塔罗命运</p>
+  </header>
+  <div id="game-container">
+    <div id="score">
+      <h2>积分：<span id="score-value">0</span></h2>
+    </div>
+    <div id="task">
+      <h2>任务</h2>
+      <p id="task-desc">点击抽牌开始你的冒险</p>
+    </div>
+    <div id="cards">
+      <!-- Cards will be dynamically generated -->
+    </div>
+    <button class="button" id="draw-card">抽牌</button>
+    <div id="result"></div>
+  </div>
+
+  <script>
+    const taskDesc = document.getElementById("task-desc");
+    const cardsContainer = document.getElementById("cards");
+    const result = document.getElementById("result");
+    const drawButton = document.getElementById("draw-card");
+    const scoreValue = document.getElementById("score-value");
+
+    const tarotDeck = [
+      { name: "愚者", image: "https://upload.wikimedia.org/wikipedia/commons/3/3c/RWS_Tarot_00_Fool.jpg", meaning: "新起点，无限可能" },
+      { name: "魔术师", image: "https://upload.wikimedia.org/wikipedia/commons/3/3a/The_Magician_Tarot_Card_-_Rider-Waite-Smith.jpg", meaning: "创造力，自信" },
+      { name: "女祭司", image: "https://upload.wikimedia.org/wikipedia/commons/4/42/The_High_Priestess_Tarot_Card_-_Rider-Waite-Smith.jpg", meaning: "智慧，直觉" },
+      { name: "皇后", image: "https://upload.wikimedia.org/wikipedia/commons/d/d2/The_Empress_Tarot_Card_-_Rider-Waite-Smith.jpg", meaning: "丰饶，母性" },
+      { name: "死神", image: "https://upload.wikimedia.org/wikipedia/commons/d/d7/Death_Tarot_Card_-_Rider-Waite-Smith.jpg", meaning: "结束，新的开始" }
+    ];
+
+    let currentTask = "完成一个命运转折点的解读";
+    let score = 0;
+
+    function drawCards() {
+      cardsContainer.innerHTML = "";
+      result.innerHTML = "";
+
+      // Shuffle and draw 3 cards
+      const drawnCards = tarotDeck.sort(() => 0.5 - Math.random()).slice(0, 3);
+
+      // Display cards with random orientation (正位 or 逆位)
+      drawnCards.forEach(card => {
+        const isReversed = Math.random() > 0.5;
+        const cardElement = document.createElement("div");
+        cardElement.classList.add("card");
+        cardElement.style.backgroundImage = `url('${card.image}')`;
+        cardElement.onclick = () => showResult(card, isReversed);
+        cardsContainer.appendChild(cardElement);
+      });
+
+      // Update task
+      taskDesc.innerText = `当前任务：${currentTask}`;
+    }
+
+    function showResult(card, isReversed) {
+      const orientation = isReversed ? "逆位" : "正位";
+      const meaning = isReversed
+        ? `${card.meaning}（逆位可能带来挑战）`
+        : `${card.meaning}（正位象征积极力量）`;
+      result.innerHTML = `
+        <h3>解读结果</h3>
+        <p>你抽到了 <strong>${card.name} (${orientation})</strong>。</p>
+        <p>${meaning}</p>
+      `;
+
+      // Update score
+      const points = isReversed ? -10 : 20;
+      score += points;
+      scoreValue.innerText = score;
+
+      // Check for task completion
+      if (score >= 50) {
+        currentTask = "探索命运的新阶段！";
+        alert("任务完成！开始新的冒险！");
+      }
+    }
+
+    drawButton.onclick = drawCards;
+  </script>
+</body>
+</html>
